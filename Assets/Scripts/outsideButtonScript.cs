@@ -4,20 +4,31 @@ using UnityEngine;
 
 public class outsideButtonScript : MonoBehaviour
 {
-    public GameObject elevator1;
-    public GameObject elevator2;
-    public GameObject elevator3;
-    public GameObject elevator4;
-    public GameObject elevator5;
-    public GameObject[] elevator = new GameObject[5];
+    public GameObject[] e = new GameObject[5];
+    public elevatorScript[] es = new elevatorScript[5];
     // Start is called before the first frame update
     void Start()
     {
-        elevator[0] = elevator1;
-        elevator[1] = elevator2;
-        elevator[2] = elevator3;
-        elevator[3] = elevator4;
-        elevator[4] = elevator5;
+        es[0] = e[0].GetComponent<elevatorScript>();
+        es[1] = e[1].GetComponent<elevatorScript>();
+        es[2] = e[2].GetComponent<elevatorScript>();
+        es[3] = e[3].GetComponent<elevatorScript>();
+        es[4] = e[4].GetComponent<elevatorScript>();
+
+        //test:
+        //InvokeRepeating("printTest", 1, 1f);
+    }
+
+    void printTest()
+    {
+        //test
+        /*
+        print("e[0]_floot_current=" + es[0].floor_current);
+        print("e[1]_floot_current=" + es[1].floor_current);
+        print("e[2]_floot_current=" + es[2].floor_current);
+        print("e[3]_floot_current=" + es[3].floor_current);
+        print("e[4]_floot_current=" + es[4].floor_current);
+        */
     }
 
     // Update is called once per frame
@@ -29,13 +40,13 @@ public class outsideButtonScript : MonoBehaviour
     public void UP(int i)
     {
         int tarEle = findProperElevator();
-        elevator[tarEle].SendMessage("AddTask", i);
+        e[tarEle].SendMessage("AddTask", i);
     }
 
     public void DOWN(int i)
     {
         int tarEle = findProperElevator();
-        elevator[tarEle].SendMessage("AddTask", i);
+        e[tarEle].SendMessage("AddTask", i);
     }
 
     int findProperElevator()

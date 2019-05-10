@@ -40,6 +40,7 @@ public class elevatorScript: MonoBehaviour
     void Start()
     {
         rect = GetComponent<RectTransform>();
+        animator = transform.GetComponent<Animator>();
         InvokeRepeating("run", 0, 0.03f);
     }
 
@@ -96,17 +97,20 @@ public class elevatorScript: MonoBehaviour
         return;
     }
 
-    float animatedTime = 0;
+    public float animatedTime = 0;
     void run()
     {
         //电梯停在某楼层
         if (animated == true)
         {
             animatedTime += Time.deltaTime;
-            if (animatedTime > 1.0f)
+            if (animatedTime > 1f)
+            {
+                animator.SetBool("isOpen", false);
+            }
+            if (animatedTime > 1.5f)
             {
                 animated = false;
-                changeAnimation();
                 animatedTime = 0;
             }
             return;
@@ -149,20 +153,29 @@ public class elevatorScript: MonoBehaviour
     {
         //make buttons interactable
         string outbuttonState = state == 1 ? "up" : "down";
-        outsideButton.transform.Find(floor_current.ToString()).transform.Find(outbuttonState).GetComponent<Button>().interactable = true;
+        if (floor_current!=1&&floor_current!=20)
+        {
+            outsideButton.transform.Find(floor_current.ToString()).transform.Find(outbuttonState).GetComponent<Button>().interactable = true;
+        }
         floorButton.transform.Find(floor_current.ToString()).GetComponent<Button>().interactable = true;
         //update floor
         floor.RemoveAt(0);
         if (floor.Count == 0)
         {
             state = 0;
+            if (floor_current != 20) outsideButton.transform.Find(floor_current.ToString()).transform.Find("up").GetComponent<Button>().interactable = true;
+            if (floor_current != 1) outsideButton.transform.Find(floor_current.ToString()).transform.Find("down").GetComponent<Button>().interactable = true;
+            //add newa task
+            //run_addNewTaskFromWaiting();
         }
         //start animation
         animated = true;
         changeAnimation();
     }
+    bool animation_flag = true;
     void changeAnimation()
     {
-        print("I’m opened at FLOOR:"+floor_current);
+        animator.SetBool("isOpen", true);
     }
+
 }
