@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,7 +42,9 @@ public class outsideButtonScript : MonoBehaviour
 
     public void UP(int f)
     {
+        print("haha");
         int tarEle = findProperElevator(f, 1);
+        debug(f, tarEle);   //debug
         if (tarEle != 5)
         {
             _e[tarEle].SendMessage("AddTask", f);
@@ -54,7 +57,8 @@ public class outsideButtonScript : MonoBehaviour
 
     public void DOWN(int f)
     {
-        int tarEle = findProperElevator(f,2);
+        int tarEle = findProperElevator(f, 2);
+        debug(f, tarEle);   //debug
         if (tarEle != 5)
         {
             _e[tarEle].SendMessage("AddTask", f);
@@ -65,36 +69,42 @@ public class outsideButtonScript : MonoBehaviour
         }
     }
 
-    int findProperElevator(int f, int state)
+    int findProperElevator(int f, int wantState)
     {
         //targetEle==5:no such elevator meet your demand.
+
+        print("sadfiudhfaksdhasdkfhaskjd!!!!!!!!");
         int targetEle = 5;
-        if (state == 1)     //wants up
+        if (wantState == 1)     //wants up
         {
+            print("sadfiudhfaksdhasdkfhaskjd!!!!!!!!");
             bool find_up = false;
             int difference_up = 99;
             int difference_wait = 99;
             for (int i = 0; i < 5; i++)
             {
+                print("sadfiudhfaksdhasdkfhaskjd!!!!!!!!");
                 if (e[i].state == 1)
                 {
+                    print("i'm in 1");
                     if (e[i].floor_current < f || (e[i].floor_current == f && e[i].animated == true && e[i].animatedTime < 1.1f)) 
                     {
-                        int dif = f - e[i].floor_current;
+                        print("i'm in 2");
+                        int dif = Math.Abs(f - e[i].floor_current);
                         if (dif < difference_up)
                         {
+                            print("i'm in 3");
                             find_up = true;
                             targetEle = i;
                             difference_up = dif;
                         }
                     }
                 }
-                
-                if (e[i].state == 0)
+                else if (e[i].state == 0)
                 {
                     if (find_up == false)
                     {
-                        int dif = f - e[i].floor_current;
+                        int dif = Math.Abs(f - e[i].floor_current);
                         if (dif < difference_wait)
                         {
                             targetEle = i;
@@ -102,13 +112,8 @@ public class outsideButtonScript : MonoBehaviour
                     }
                 }
             }
-
-            if (find_up == false && targetEle != 5)
-            {
-                print("through wait");
-            }
         }
-        else if(state==2)   //wants dowm
+        else if(wantState==2)   //wants dowm
         {
             bool find_down = false;
             int difference_down = 99;
@@ -119,7 +124,7 @@ public class outsideButtonScript : MonoBehaviour
                 {
                     if (e[i].floor_current > f || (e[i].floor_current == f && e[i].animated == true && e[i].animatedTime < 1.1f))
                     {
-                        int dif = e[i].floor_current - f;
+                        int dif = Math.Abs(e[i].floor_current - f);
                         if (dif < difference_down)
                         {
                             find_down = true;
@@ -133,7 +138,7 @@ public class outsideButtonScript : MonoBehaviour
                 {
                     if (find_down == false)
                     {
-                        int dif = e[i].floor_current - f;
+                        int dif = Math.Abs(e[i].floor_current - f);
                         if (dif < difference_wait)
                         {
                             targetEle = i;
@@ -146,4 +151,10 @@ public class outsideButtonScript : MonoBehaviour
 
         return targetEle;
     }
+    void debug(int f, int e)
+    {
+        print("i dispatch Floor(" + f + ") to Ele(" + e + ')');
+    }
 }
+
+

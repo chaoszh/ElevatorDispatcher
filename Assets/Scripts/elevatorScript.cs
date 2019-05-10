@@ -86,7 +86,7 @@ public class elevatorScript: MonoBehaviour
             {
                 floor_wait.Add(f);
             }
-            else if (floor_current == f && animated==false)
+            else if (floor_current == f && (animated == false || animatedTime > 1.1f))
             {
                 floor_wait.Add(f);
             }
@@ -114,7 +114,7 @@ public class elevatorScript: MonoBehaviour
             {
                 floor_wait.Add(f);
             }
-            else if (floor_current == f && animated == false)
+            else if (floor_current == f && (animated == false || animatedTime > 1.1f))
             {
                 floor_wait.Add(f);
             }
@@ -135,27 +135,30 @@ public class elevatorScript: MonoBehaviour
                 }
             }
         }
-        debug();    //debug
+        //debug();    //debug
         return;
     }
     public void RefillTask(int passtate)
     {
-        return;
+        //bool flag_up = false;
+        //bool flag_down = false;
         if (passtate == 1)
         {
-            //detect floor.wait
+            state = 0;
+            //detect floor_wait
             if (floor_wait.Count != 0)
             {
-                state = 2;
+                //flag_down = true;
                 foreach (int i in floor_wait)
                 {
                     AddTask(i);
                     floor_wait.Remove(i);
                 }
             }
+            //detect floor_waitdown_out
             if (outScript.floor_waitdown_out.Count != 0)
             {
-                state = 2;
+                //flag_down = true;
                 foreach (int i in outScript.floor_waitdown_out)
                 {
                     if (i < floor_current)
@@ -166,8 +169,9 @@ public class elevatorScript: MonoBehaviour
                 }
             }
 
-            if (floor.Count == 0)
+            if (floor.Count == 0 && outScript.floor_waitup_out.Count != 0)
             {
+                //flag_up = true;
                 int min = 99;
                 foreach (int i in outScript.floor_waitup_out)
                 {
@@ -177,14 +181,14 @@ public class elevatorScript: MonoBehaviour
                     }
                 }
                 AddTask(min);
-                outScript.floor_waitdown_out.Remove(min);
+                outScript.floor_waitup_out.Remove(min);
             }
         }
         else if (passtate == 2)
         {
             if (floor_wait.Count != 0)
             {
-                state = 1;
+                //state = 1;
                 foreach (int i in floor_wait)
                 {
                     AddTask(i);
@@ -193,7 +197,7 @@ public class elevatorScript: MonoBehaviour
             }
             if (outScript.floor_waitup_out.Count != 0)
             {
-                state = 1;
+                //state = 1;
                 foreach (int i in outScript.floor_waitup_out)
                 {
                     if (i > floor_current)
@@ -203,10 +207,10 @@ public class elevatorScript: MonoBehaviour
                     }
                 }
             }
-            if (floor.Count == 0)
+            if (floor.Count == 0 && outScript.floor_waitdown_out.Count != 0)
             {
-                int max = 99;
-                foreach (int i in outScript.floor_waitup_out)
+                int max = 0;
+                foreach (int i in outScript.floor_waitdown_out)
                 {
                     if (i > max)
                     {
@@ -240,9 +244,6 @@ public class elevatorScript: MonoBehaviour
                 if (floor.Count == 0)
                 {
                     RefillTask(state);
-                    print("RefillTask:");
-                    debug();
-                    state = 0;
                 }
                 animated = false;
                 animatedTime = 0;
