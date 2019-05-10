@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-using UnityEngine.UI;
+//using System.Threading;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class elevatorScript: MonoBehaviour
 {
@@ -18,10 +18,17 @@ public class elevatorScript: MonoBehaviour
     void Start()
     {
         rect = GetComponent<RectTransform>();
-        animator.GetComponent<Animator>();
+        animator = GetComponent<Animator>();
         outScript = outsideButton.GetComponent<outsideButtonScript>();
         tasksup = outScript.tasksup;
         tasksdown = outScript.tasksdown;
+
+        //线程
+        //Thread thread = new Thread(new ThreadStart(Running));
+
+        this.InvokeRepeating("Running", 0, 0.1f);
+
+
     }
 
     // Update is called once per frame
@@ -35,6 +42,15 @@ public class elevatorScript: MonoBehaviour
         Text.GetComponent<Text>().text = str;
     }
     #endregion
+
+    void Sleep(float t)
+    {
+        float s = Time.time;
+        while (Time.time-s<t)
+        {
+            continue;
+        }
+    }
 
     #region [Elevator Message]
     public int current;
@@ -56,7 +72,7 @@ public class elevatorScript: MonoBehaviour
     /// </summary>
     void SetState()
     {
-        if (state = 0)
+        if (state == 0)
         {
             if (tasks.Count != 0)
             {
@@ -74,12 +90,12 @@ public class elevatorScript: MonoBehaviour
                 }
             }
         }
-        else if (state = 1)
+        else if (state == 1)
         {
             if (max > current) state = 1;
             else state = 0;
         }
-        else if (state = 2)
+        else if (state == 2)
         {
             if (min < current) state = 2;
             else state = 0;
@@ -112,19 +128,21 @@ public class elevatorScript: MonoBehaviour
         }
         else
         {
-            min = tasks[0];
-            max = tasks[size - 1];
+            min = (int)tasks[0];
+            max = (int)tasks[size - 1];
         }
     }
 
     #endregion
 
     #region [Control elevator to move]
+    bool isRunning = false;
     /// <summary>
     /// 电梯运行
     /// </summary>
     void Running()
     {
+        isRunning = true;
         isArrived = Move();
         if (isArrived)
         {
@@ -149,10 +167,12 @@ public class elevatorScript: MonoBehaviour
             if (flag)
             {
                 OpenDoor();
+                Sleep(5000f);
                 CloseDoor();
             }
             SetState();
         }
+        isRunning = false;
     }
 
     bool Move()
@@ -168,9 +188,10 @@ public class elevatorScript: MonoBehaviour
         }
 
         //on arrived
-        if ((pos.y + y_dis) % 25 == 0)
+        Vector2 pos = rect.anchoredPosition;
+        if (pos.y % 25 == 0)
         {
-            SetCurrent((pos.y + y_dis) / 25);
+            SetCurrent((int)(pos.y / 25));
             return true;
         }
         else
@@ -183,14 +204,14 @@ public class elevatorScript: MonoBehaviour
     {
         Vector2 pos = rect.anchoredPosition;
         rect.anchoredPosition = new Vector2(pos.x, pos.y + 1);
-        Thread.Sleep(2);
+        Sleep(20);
     }
 
     void MoveDown()
     {
         Vector2 pos = rect.anchoredPosition;
         rect.anchoredPosition = new Vector2(pos.x, pos.y - 1);
-        Thread.Sleep(2);
+        Sleep(20);
     }
     #endregion
 
@@ -211,13 +232,13 @@ public class elevatorScript: MonoBehaviour
     {
         if (isArrived == false) return;
         animator.SetBool("isOpen", true);
-        Thread.Sleep(500);
+        //Thread.Sleep(500);
     }
 
     public void CloseDoor()
     {
         if (isArrived == false) return;
-        Thread.Sleep(500);
+        //Thread.Sleep(500);
         animator.SetBool("isOpen", false);
     }
     #endregion

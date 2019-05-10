@@ -150,8 +150,6 @@ public class outsideButtonScript : MonoBehaviour
     }
     */
     #endregion
-    /******************************/
-    //change
 
     public void UP(int floor)
     {
@@ -159,7 +157,7 @@ public class outsideButtonScript : MonoBehaviour
         tasksup.Sort();
     }
 
-    public void Down(int floor)
+    public void DOWN(int floor)
     {
         tasksdown.Add(floor);
         tasksdown.Sort();
