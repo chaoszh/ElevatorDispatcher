@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class outsideButtonScript : MonoBehaviour
 {
     public GameObject[] _e = new GameObject[5];
     public elevatorScript[] e = new elevatorScript[5];
+    public GameObject Text;
     public ArrayList floor_waitup_out = new ArrayList();
     public ArrayList floor_waitdown_out = new ArrayList();
     // Start is called before the first frame update
@@ -24,7 +26,17 @@ public class outsideButtonScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        string str = "floor_wait_up:";
+        foreach (int i in floor_waitup_out)
+        {
+            str = str + i.ToString() + ' ';
+        }
+        str += "\nfloor_wait_down:";
+        foreach (int i in floor_waitdown_out)
+        {
+            str = str + i.ToString() + ' ';
+        }
+        Text.GetComponent<Text>().text = str;
     }
 
     public void UP(int f)

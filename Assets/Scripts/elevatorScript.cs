@@ -51,8 +51,13 @@ public class elevatorScript: MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        string str = "";
+        string str = "floor:";
         foreach (int i in floor)
+        {
+            str = str + i.ToString() + ' ';
+        }
+        str += "\nfloor_wait:";
+        foreach (int i in floor_wait)
         {
             str = str + i.ToString() + ' ';
         }
@@ -62,73 +67,83 @@ public class elevatorScript: MonoBehaviour
 
     public void AddTask(int f)
     {
+        //duplication
         if (floor.Contains(f))
         {
-            return;
-        }
 
-        if (state == 0)
+        }
+        //state=0
+        else if (state == 0)
         {
             if (f > floor_current) state = 1;
             else if (f < floor_current) state = 2;
             floor.Add(f);
-            return;
         }
-
-        int size = floor.Count;
-        for (int i = 0; i < size; i++)
+        //state=1
+        else if (state == 1)
         {
-            if (state == 1)
+            if (floor_current > f)
             {
-                if (floor_current > f)
-                {
-                    floor_wait.Add(f);
-                    debug();    //debug
-                    return;
-                }
-                else if(floor_current == f)
-                {
-                    if(animated==true)
-                    {
-                        print("animated");
-                    }
-                    else
-                    {
-                        print("b");
-                        floor_wait.Add(f);
-                    }
-                }
-                else if ((int)floor[i] > f)
-                {
-                    floor.Insert(i, f);
-                    debug();    //debug
-                    return;
-                }
+                floor_wait.Add(f);
             }
-            else if (state == 2)
+            else if (floor_current == f && animated==false)
             {
-                if (floor_current < f)
+                floor_wait.Add(f);
+            }
+            else
+            {
+                bool isInsert = false;
+                for (int i = 0; i < floor.Count; i++)
                 {
-                    floor_wait.Add(f);
-                    debug();    //debug
-                    return;
+                    if ((int)floor[i] > f)
+                    {
+                        isInsert = true;
+                        floor.Insert(i, f);
+                    }
                 }
-                else if ((int)floor[i] < f)
+                if (isInsert == false)
                 {
-                    floor.Insert(i, f);
-                    debug();    //debug
-                    return;
+                    floor.Add(f);
                 }
             }
         }
-        floor.Add(f);
+        //state=2
+        else if (state == 2)
+        {
+            if (floor_current < f)
+            {
+                floor_wait.Add(f);
+            }
+            else if (floor_current == f && animated == false)
+            {
+                floor_wait.Add(f);
+            }
+            else
+            {
+                bool isInsert = false;
+                for (int i = 0; i < floor.Count; i++)
+                {
+                    if ((int)floor[i] < f)
+                    {
+                        isInsert = true;
+                        floor.Insert(i, f);
+                    }
+                }
+                if (isInsert == false)
+                {
+                    floor.Add(f);
+                }
+            }
+        }
         debug();    //debug
         return;
     }
     public void RefillTask(int passtate)
     {
+        return;
         if (passtate == 1)
         {
+            //detect floor.wait
             if (floor_wait.Count != 0)
             {
                 state = 2;
