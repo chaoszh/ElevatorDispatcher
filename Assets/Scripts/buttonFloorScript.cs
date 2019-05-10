@@ -23,24 +23,4 @@ public class buttonFloorScript : MonoBehaviour
     {
         elevator.SendMessage("AddTask", i);
     }
-
-    public void button_open()
-    {
-        if (elevatorS.animated == true)
-        {
-            elevatorS.animatedTime = 0f;
-        }
-    }
-
-    public void button_close()
-    {
-        if (elevatorS.animated == true)
-        {
-            elevatorS.animatedTime = 1f;
-        }
-    }
-
-    public void button_alarm()
-    {
-    }
 }

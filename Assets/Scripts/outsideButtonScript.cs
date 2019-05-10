@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class outsideButtonScript : MonoBehaviour
 {
     public GameObject[] _e = new GameObject[5];
     public elevatorScript[] e = new elevatorScript[5];
-    public ArrayList floor_waitup_out = new ArrayList();
-    public ArrayList floor_waitdown_out = new ArrayList();
+    public ArrayList tasksup = new ArrayList();
+    public ArrayList tasksdown = new ArrayList();
+    public GameObject Text;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,15 +19,26 @@ public class outsideButtonScript : MonoBehaviour
         e[3] = _e[3].GetComponent<elevatorScript>();
         e[4] = _e[4].GetComponent<elevatorScript>();
 
-        //test:
-        //InvokeRepeating("printTest", 1, 1f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        string str = "up:";
+        foreach (int i in tasksup)
+        {
+            str = str + i.ToString() + ' ';
+        }
+        str += "\ndown:";
+        foreach (int i in tasksdown)
+        {
+            str = str + i.ToString() + ' ';
+        }
+        Text.GetComponent<Text>().text = str;
     }
+
+    #region 原来的代码
+    /*
 
     public void UP(int f)
     {
@@ -52,6 +65,7 @@ public class outsideButtonScript : MonoBehaviour
             floor_waitdown_out.Add(f);
         }
     }
+
 
     int findProperElevator(int f, int state)
     {
@@ -133,5 +147,21 @@ public class outsideButtonScript : MonoBehaviour
         }
 
         return targetEle;
+    }
+    */
+    #endregion
+    /******************************/
+    //change
+
+    public void UP(int floor)
+    {
+        tasksup.Add(floor);
+        tasksup.Sort();
+    }
+
+    public void Down(int floor)
+    {
+        tasksdown.Add(floor);
+        tasksdown.Sort();
     }
 }

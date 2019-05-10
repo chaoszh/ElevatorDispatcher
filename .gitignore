@@ -2,3 +2,5 @@ Library/
 ProjectSettings/
 Temp/
 Packages/
+.vs/
+obj/
