@@ -42,6 +42,5 @@ public class buttonFloorScript : MonoBehaviour
 
     public void button_alarm()
     {
-        print("\a");
     }
 }

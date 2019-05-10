@@ -4,31 +4,21 @@ using UnityEngine;
 
 public class outsideButtonScript : MonoBehaviour
 {
-    public GameObject[] e = new GameObject[5];
-    public elevatorScript[] es = new elevatorScript[5];
+    public GameObject[] _e = new GameObject[5];
+    public elevatorScript[] e = new elevatorScript[5];
+    public ArrayList floor_waitup_out = new ArrayList();
+    public ArrayList floor_waitdown_out = new ArrayList();
     // Start is called before the first frame update
     void Start()
     {
-        es[0] = e[0].GetComponent<elevatorScript>();
-        es[1] = e[1].GetComponent<elevatorScript>();
-        es[2] = e[2].GetComponent<elevatorScript>();
-        es[3] = e[3].GetComponent<elevatorScript>();
-        es[4] = e[4].GetComponent<elevatorScript>();
+        e[0] = _e[0].GetComponent<elevatorScript>();
+        e[1] = _e[1].GetComponent<elevatorScript>();
+        e[2] = _e[2].GetComponent<elevatorScript>();
+        e[3] = _e[3].GetComponent<elevatorScript>();
+        e[4] = _e[4].GetComponent<elevatorScript>();
 
         //test:
         //InvokeRepeating("printTest", 1, 1f);
-    }
-
-    void printTest()
-    {
-        //test
-        /*
-        print("e[0]_floot_current=" + es[0].floor_current);
-        print("e[1]_floot_current=" + es[1].floor_current);
-        print("e[2]_floot_current=" + es[2].floor_current);
-        print("e[3]_floot_current=" + es[3].floor_current);
-        print("e[4]_floot_current=" + es[4].floor_current);
-        */
     }
 
     // Update is called once per frame
@@ -37,20 +27,111 @@ public class outsideButtonScript : MonoBehaviour
         
     }
 
-    public void UP(int i)
+    public void UP(int f)
     {
-        int tarEle = findProperElevator();
-        e[tarEle].SendMessage("AddTask", i);
+        int tarEle = findProperElevator(f, 1);
+        if (tarEle != 5)
+        {
+            _e[tarEle].SendMessage("AddTask", f);
+        }
+        else
+        {
+            floor_waitup_out.Add(f);
+        }
     }
 
-    public void DOWN(int i)
+    public void DOWN(int f)
     {
-        int tarEle = findProperElevator();
-        e[tarEle].SendMessage("AddTask", i);
+        int tarEle = findProperElevator(f,2);
+        if (tarEle != 5)
+        {
+            _e[tarEle].SendMessage("AddTask", f);
+        }
+        else
+        {
+            floor_waitdown_out.Add(f);
+        }
     }
 
-    int findProperElevator()
+    int findProperElevator(int f, int state)
     {
-        return 0;
+        //targetEle==5:no such elevator meet your demand.
+        int targetEle = 5;
+        if (state == 1)     //wants up
+        {
+            bool find_up = false;
+            int difference_up = 99;
+            int difference_wait = 99;
+            for (int i = 0; i < 5; i++)
+            {
+                if (e[i].state == 1)
+                {
+                    if (e[i].floor_current < f || (e[i].floor_current == f && e[i].animated == true && e[i].animatedTime < 1.1f)) 
+                    {
+                        int dif = f - e[i].floor_current;
+                        if (dif < difference_up)
+                        {
+                            find_up = true;
+                            targetEle = i;
+                            difference_up = dif;
+                        }
+                    }
+                }
+                
+                if (e[i].state == 0)
+                {
+                    if (find_up == false)
+                    {
+                        int dif = f - e[i].floor_current;
+                        if (dif < difference_wait)
+                        {
+                            targetEle = i;
+                            difference_wait = dif;                        }
+                    }
+                }
+            }
+
+            if (find_up == false && targetEle != 5)
+            {
+                print("through wait");
+            }
+        }
+        else if(state==2)   //wants dowm
+        {
+            bool find_down = false;
+            int difference_down = 99;
+            int difference_wait = 99;
+            for (int i = 0; i < 5; i++)
+            {
+                if (e[i].state == 2)
+                {
+                    if (e[i].floor_current > f || (e[i].floor_current == f && e[i].animated == true && e[i].animatedTime < 1.1f))
+                    {
+                        int dif = e[i].floor_current - f;
+                        if (dif < difference_down)
+                        {
+                            find_down = true;
+                            targetEle = i;
+                            difference_down = dif;
+                        }
+                    }
+                }
+
+                if (e[i].state == 0)
+                {
+                    if (find_down == false)
+                    {
+                        int dif = e[i].floor_current - f;
+                        if (dif < difference_wait)
+                        {
+                            targetEle = i;
+                            difference_wait = dif;
+                        }
+                    }
+                }
+            }
+        }
+
+        return targetEle;
     }
 }
