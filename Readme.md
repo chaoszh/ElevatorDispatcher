@@ -40,11 +40,13 @@
 ## 四、实现
 ### 添加任务
 添加任务的方式就是在button控件上添加响应函数。
+
 |函数名|文件|代码位置|
 |:--:|:--:|:--:|
 |public void UP(int floor)|outsideButtonScript|168-210|
 |public void DOWN(int floor)|outsideButtonScript|212-254|
 |public void FLOOR(int floor)|insideButtonScript|22-25|
+
 UP()和DOWN()函数首先检测新进的任务能否分配至某个电梯的内部任务列表中，若不能则挂起放在外部电梯任务列表，并且维护Update()函数，每隔一段时间就检测一次能否把外部电梯任务分配出去。
 ```c#
 void Update()
@@ -103,12 +105,14 @@ void Update()
 
 ### 其它功能
 **电梯楼层、状态的显示器**
+
 |函数名|含义|region块|代码位置|
 |:--:|:--:|:--:|:--:|
 |void SetFloorShower(int current)|设置电梯的楼层显示|UI|276-279|
 |void SetStateShower()|设置电梯运行状态显示|UI|281-301|
 
 **开关电梯门**
+
 |函数名|含义|region块|代码位置|
 |:--:|:--:|:--:|:--:|
 |public void OpenDoor()|控制电梯门打开的动画|UI|321-328|
