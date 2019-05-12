@@ -55,8 +55,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\buttonDebug.cs" />
      <Compile Include="Assets\Scripts\buttonFloorScript.cs" />
-     <Compile Include="Assets\Scripts\dispatcherSystem.cs" />
      <Compile Include="Assets\Scripts\elevatorScript.cs" />
      <Compile Include="Assets\Scripts\outsideButtonScript.cs" />
  <Reference Include="Unity.Timeline.Editor">

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class outsideButtonScript : MonoBehaviour
 {
     public GameObject[] _e = new GameObject[5];
-    public elevatorScript[] e = new elevatorScript[5];
+    private elevatorScript[] e = new elevatorScript[5];
     public ArrayList tasksup = new ArrayList();
     public ArrayList tasksdown = new ArrayList();
     public GameObject Text;
@@ -19,7 +19,6 @@ public class outsideButtonScript : MonoBehaviour
         e[2] = _e[2].GetComponent<elevatorScript>();
         e[3] = _e[3].GetComponent<elevatorScript>();
         e[4] = _e[4].GetComponent<elevatorScript>();
-
     }
 
     // Update is called once per frame
