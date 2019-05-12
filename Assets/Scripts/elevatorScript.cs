@@ -196,12 +196,10 @@ public class elevatorScript: MonoBehaviour
     }
     #endregion
 
-    #region [Control elevator to move]
+    #region [Movement Controller]
     public bool isAbleToDoors = false;
     public bool isArrived = false;
-    /// <summary>
-    /// 电梯运行
-    /// </summary>
+
     bool OnArrived()
     {
         bool flag = false;
@@ -274,7 +272,7 @@ public class elevatorScript: MonoBehaviour
     }
     #endregion
 
-    #region [UI updated]
+    #region [UI]
     void SetFloorShower(int current)
     {
         floorShower.GetComponent<Text>().text = current.ToString();
@@ -329,7 +327,7 @@ public class elevatorScript: MonoBehaviour
         StartCoroutine("afterOpenDoor", 1.3f);
     }
 
-    IEnumerator afterOpenDoor(float t)
+    private IEnumerator afterOpenDoor(float t)
     {
         yield return new WaitForSeconds(t);//运行到这，暂停t秒
 
