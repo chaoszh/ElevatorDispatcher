@@ -19,11 +19,7 @@ public class insideButtonScript : MonoBehaviour
         
     }
 
-<<<<<<< HEAD:Assets/Scripts/insideButtonScript.cs
-    public void FLOOR(int floor)
-=======
     public void FLOOR(int i)
->>>>>>> reading:Assets/Scripts/insideButtonScript.cs
     {
         elevator.SendMessage("AddTasks", i);
     }

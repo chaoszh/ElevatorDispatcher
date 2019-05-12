@@ -14,12 +14,18 @@ public class elevatorScript: MonoBehaviour
     public RectTransform rect;
     public outsideButtonScript outScript;
     public GameObject Text;
+    public GameObject UpI;
+    public GameObject DownI;
+    private Image Up;
+    private Image Down;
     // Start is called before the first frame update
     void Start()
     {
         rect = GetComponent<RectTransform>();
         animator = GetComponent<Animator>();
         outScript = outsideButton.GetComponent<outsideButtonScript>();
+        Up = UpI.GetComponent<Image>();
+        Down = DownI.GetComponent<Image>();
 
         state = 0;
         min = max = -1;
@@ -196,7 +202,7 @@ public class elevatorScript: MonoBehaviour
     /// <summary>
     /// 电梯运行
     /// </summary>
-    void OnArrived()
+    bool OnArrived()
     {
         bool flag = false;
 
@@ -223,28 +229,28 @@ public class elevatorScript: MonoBehaviour
             isArrived = true;   //电梯不会移动
             isAbleToDoors = true;
             OpenDoor();
-            this.DelayToDo(1.7f, () =>
-            {
-                CloseDoor();
-                isAbleToDoors = false;
-            });
-            this.DelayToDo(2.5f, () =>
-            {
-                isArrived = false;
-            });
         }
 
         SetState();
+
+        return flag;
     }
 
     void Move()
     {
-        print("state="+state);
-        print("min=" + min);
-        print("max=" + max);
         if (isArrived) return;
 
+        //on arrived
+        bool flag = false;
+        Vector2 pos = rect.anchoredPosition;
+        if (pos.y % 25 == 0)
+        {
+            SetCurrent((int)(pos.y / 25 + 1));
+            flag = OnArrived();
+        }
+
         //on move
+        if (flag) return;
         if (state == 1)
         {
             MoveUp();
@@ -252,14 +258,6 @@ public class elevatorScript: MonoBehaviour
         else if (state == 2)
         {
             MoveDown();
-        }
-
-        //on arrived
-        Vector2 pos = rect.anchoredPosition;
-        if (pos.y % 25 == 0)
-        {
-            SetCurrent((int)(pos.y / 25 + 1));
-            OnArrived();
         }
     }
 
@@ -284,17 +282,23 @@ public class elevatorScript: MonoBehaviour
     
     void SetStateShower()
     {
+        Color visible = new Color(1, 1, 1, 1);
+        Color invisible = new Color(1, 1, 1, 0.2f);
+
         if (state == 0)
         {
-
+            Up.color = invisible;
+            Down.color = invisible;
         }
         else if (state == 1)
         {
-            
+            Up.color = visible;
+            Down.color = invisible;
         }
         else if (state == 2)
         {
-
+            Up.color = invisible;
+            Down.color = visible;
         }
     }
 
@@ -315,18 +319,38 @@ public class elevatorScript: MonoBehaviour
     }
 
     public Animator animator;
-
+    
     public void OpenDoor()
     {
-        print("opendoor");
         if (isAbleToDoors == false) return;
         animator.SetBool("isOpen", true);
+        
+        StopCoroutine("afterOpenDoor");
+        StartCoroutine("afterOpenDoor", 1.3f);
+    }
+
+    IEnumerator afterOpenDoor(float t)
+    {
+        yield return new WaitForSeconds(t);//运行到这，暂停t秒
+
+        animator.SetBool("isOpen", false);
+        isAbleToDoors = false;
+        this.DelayToDo(0.7f, () =>
+        {
+            isArrived = false;
+        });
     }
 
     public void CloseDoor()
     {
         if (isAbleToDoors == false) return;
         animator.SetBool("isOpen", false);
+
+        isAbleToDoors = false;
+        this.DelayToDo(0.7f, () =>
+        {
+            isArrived = false;
+        });
     }
     #endregion
 
