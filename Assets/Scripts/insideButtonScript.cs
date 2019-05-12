@@ -19,7 +19,7 @@ public class buttonFloorScript : MonoBehaviour
         
     }
 
-    public void addTask(int i)
+    public void FLOOR(int floor)
     {
         elevator.SendMessage("AddTasks", i);
     }
