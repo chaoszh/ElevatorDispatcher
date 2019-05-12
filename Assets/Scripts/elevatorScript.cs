@@ -21,6 +21,9 @@ public class elevatorScript: MonoBehaviour
         animator = GetComponent<Animator>();
         outScript = outsideButton.GetComponent<outsideButtonScript>();
 
+        state = 0;
+        min = max = -1;
+
         //线程
         //Thread thread = new Thread(new ThreadStart(Running));
 
@@ -51,7 +54,7 @@ public class elevatorScript: MonoBehaviour
 
     #region [Elevator Message]
     public int current;
-    public int state=1;
+    public int state = 0;
     /// <summary>
     /// 每次运行到达新楼层，自动更新当前楼层数current和UI界面的floorShower
     /// </summary>
@@ -69,7 +72,11 @@ public class elevatorScript: MonoBehaviour
     {
         if (state == 0)
         {
-            if (tasks.Count != 0)
+            if (min == -1 && max == -1)
+            {
+                state = 0;
+            }
+            else
             {
                 if (min < current) state = 2;
                 else if (max > current) state = 1;
@@ -94,8 +101,8 @@ public class elevatorScript: MonoBehaviour
     public ArrayList tasks = new ArrayList();
     public ArrayList tasksup = new ArrayList();
     public ArrayList tasksdown = new ArrayList();
-    public int min;
-    public int max;
+    public int min = -1;
+    public int max = -1;
     
     //Add task
     void AddTasks(int floor)
@@ -110,7 +117,7 @@ public class elevatorScript: MonoBehaviour
         tasksup.Sort();
         SetMinMax();
     }
-    void AddTaskdown(int floor)
+    void AddTasksdown(int floor)
     {
         tasksdown.Add(floor);
         tasksdown.Sort();
@@ -132,7 +139,7 @@ public class elevatorScript: MonoBehaviour
     }
     void RemoveTasksdown(int floor)
     {
-        tasks.Remove(floor);
+        tasksdown.Remove(floor);
         SetButtonInteractable(current, "tasksdown");
         SetMinMax();
     }
@@ -143,42 +150,43 @@ public class elevatorScript: MonoBehaviour
         int size1 = tasks.Count;
         int size2 = tasksup.Count;
         int size3 = tasksdown.Count;
-        if (size1 == 0 && size2 == 0 && size3 == 0)
-        {
-            max = min = -1;
-        }
-        else
-        {
-            max = Max((int)tasks[size1 - 1], (int)tasksup[size2 - 1], (int)tasksdown[size3 - 1]);
-            min = Min((int)tasks[0], (int)tasksup[0], (int)tasksdown[0]);
-        }
+
+        int min1 = size1 == 0 ? -1 : (int)tasks[0];
+        int max1 = size1 == 0 ? -1 : (int)tasks[size1 - 1];
+        int min2 = size2 == 0 ? -1 : (int)tasksup[0];
+        int max2 = size2 == 0 ? -1 : (int)tasksup[size2 - 1];
+        int min3 = size3 == 0 ? -1 : (int)tasksdown[0];
+        int max3 = size3 == 0 ? -1 : (int)tasksdown[size3 - 1];
+
+        min = Min(min1, min2, min3);
+        max = Max(max1, max2, max3);
     }
 
     private int Min(int a, int b, int c)
     {
-        if (a < b)
+        int i = 99;
+        if (a != -1)
         {
-            if (a < c) return a;
-            else return c;
+            if (a < i) i = a;
         }
-        else
+        if (b != -1)
         {
-            if (b < c) return b;
-            else return c;
+            if (b < i) i = b;
         }
+        if (c != -1)
+        {
+            if (c < i) i = c;
+        }
+        if (i == 99) return -1;
+        else return i;
     }
     private int Max(int a, int b, int c)
     {
-        if (a > b)
-        {
-            if (a > c) return a;
-            else return c;
-        }
-        else
-        {
-            if (b > c) return b;
-            else return c;
-        }
+        int i = -1;
+        if (a > i) i = a;
+        if (b > i) i = b;
+        if (c > i) i = c;
+        return i;
     }
     #endregion
 
@@ -192,12 +200,12 @@ public class elevatorScript: MonoBehaviour
     {
         bool flag = false;
 
-        if (tasksup.Contains(current) && state == 1)
+        if (tasksup.Contains(current) && (state == 1 || current == min))
         {
             flag = true;
             RemoveTasksup(current);
         }
-        else if (tasksdown.Contains(current) && state == 2)
+        else if (tasksdown.Contains(current) && (state == 2 || current == max))
         {
             flag = true;
             RemoveTasksdown(current);
@@ -209,6 +217,7 @@ public class elevatorScript: MonoBehaviour
             RemoveTasks(current);
         }
 
+        //开关门
         if (flag)
         {
             isArrived = true;   //电梯不会移动
@@ -230,6 +239,9 @@ public class elevatorScript: MonoBehaviour
 
     void Move()
     {
+        print("state="+state);
+        print("min=" + min);
+        print("max=" + max);
         if (isArrived) return;
 
         //on move
