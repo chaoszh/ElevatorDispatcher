@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class buttonFloorScript : MonoBehaviour
+public class insideButtonScript : MonoBehaviour
 {
     public GameObject elevator;
     public elevatorScript elevatorS;
@@ -19,7 +19,11 @@ public class buttonFloorScript : MonoBehaviour
         
     }
 
+<<<<<<< HEAD:Assets/Scripts/insideButtonScript.cs
     public void FLOOR(int floor)
+=======
+    public void FLOOR(int i)
+>>>>>>> reading:Assets/Scripts/insideButtonScript.cs
     {
         elevator.SendMessage("AddTasks", i);
     }
